@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About – Fauzan Dwi Nugraha</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d12; --bg2: #111520; --bg3: #161b27;
+    --accent: #00e5c0; --accent2: #0077ff;
+    --text: #e8edf5; --muted: #7a8499;
+    --border: rgba(0,229,192,0.15); --card: rgba(22,27,39,0.9);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; cursor: none; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  #cursor { position: fixed; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: screen; transition: width 0.2s, height 0.2s; }
+  #cursor-ring { position: fixed; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(0,229,192,0.5); pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: left 0.12s ease, top 0.12s ease, width 0.3s, height 0.3s; }
+  #scroll-progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 200; width: 0%; transition: width 0.1s; }
+  .noise { position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%; background: rgba(10,13,18,0.85);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+    transition: padding 0.3s;
+  }
+  nav.scrolled { padding: 0.8rem 5%; }
+  .nav-logo { font-family: 'Space Mono', monospace; font-size: 1rem; color: var(--accent); letter-spacing: 0.1em; text-decoration: none; position: relative; }
+  .nav-logo span { color: var(--text); }
+  .nav-logo::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-logo:hover::after { width: 100%; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; font-family: 'Space Mono', monospace; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+
+  .page-hero {
+    padding: 10rem 5% 5rem; background: var(--bg2); position: relative; overflow: hidden;
+  }
+  .page-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(0,229,192,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,192,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  .page-hero-content { position: relative; z-index: 1; }
+  .page-label { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .page-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .page-divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin-top: 1.5rem; }
+
+  section { padding: 5rem 5%; }
+  .section-label { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1rem; }
+  .section-divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin-bottom: 3rem; }
+
+  /* ABOUT GRID */
+  .about-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 4rem; align-items: center; }
+  .about-img-wrap { position: relative; perspective: 800px; }
+  .about-img-frame {
+    width: 100%; aspect-ratio: 3/4; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative; transition: transform 0.1s ease, box-shadow 0.3s;
+    transform-style: preserve-3d;
+  }
+  .about-img-frame:hover { box-shadow: 0 20px 60px rgba(0,229,192,0.2); }
+  .about-img-frame::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,192,0.05) 0%, transparent 60%); z-index: 1; }
+  .about-img-frame::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(0,229,192,0.08) 100%); z-index: 1; }
+  .about-img-frame img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .about-img-frame:hover img { transform: scale(1.03); }
+  /* Scan line effect */
+  .about-img-scan { position: absolute; inset: 0; z-index: 2; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,192,0.015) 3px, rgba(0,229,192,0.015) 4px); pointer-events: none; }
+  .about-img-placeholder { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.1em; text-align: center; padding: 1rem; }
+  .about-corner { position: absolute; bottom: -16px; right: -16px; width: 80px; height: 80px; background: rgba(0,229,192,0.1); border: 1px solid var(--accent); border-radius: 2px; transition: transform 0.3s; }
+  .about-img-wrap:hover .about-corner { transform: translate(4px, 4px); }
+
+  /* Floating badge */
+  .about-badge { position: absolute; top: -16px; left: -16px; background: var(--bg3); border: 1px solid var(--accent); padding: 0.6rem 1rem; border-radius: 4px; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; z-index: 3; animation: floatBadge 3s ease-in-out infinite; }
+  @keyframes floatBadge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  .about-info { list-style: none; }
+  .about-info li { display: grid; grid-template-columns: 120px 1fr; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; transition: background 0.2s; border-radius: 4px; }
+  .about-info li:hover { background: rgba(0,229,192,0.03); padding-left: 0.5rem; }
+  .about-info li .lbl { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; align-self: center; }
+  .about-info li .val { color: var(--text); line-height: 1.5; }
+  .about-info li .val a { color: var(--accent); text-decoration: none; position: relative; }
+  .about-info li .val a::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .about-info li .val a:hover::after { width: 100%; }
+  .about-text { color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
+
+  /* SKILLS */
+  #skills { background: var(--bg); }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+  .skill-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1.25rem 1rem;
+    text-align: center; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; cursor: default;
+    position: relative; overflow: hidden;
+  }
+  .skill-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(0,229,192,0.1), transparent 70%); opacity: 0; transition: opacity 0.3s; }
+  .skill-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,229,192,0.15); }
+  .skill-card:hover::after { opacity: 1; }
+  .skill-icon { font-size: 1.8rem; margin-bottom: 0.5rem; transition: transform 0.3s; display: block; }
+  .skill-card:hover .skill-icon { transform: scale(1.2); }
+  .skill-name { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--text); letter-spacing: 0.05em; position: relative; z-index: 1; }
+  .skill-level { margin-top: 0.5rem; height: 3px; background: var(--bg3); border-radius: 2px; overflow: hidden; position: relative; z-index: 1; }
+  .skill-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; width: 0; transition: width 1.2s cubic-bezier(0.23,1,0.32,1); position: relative; }
+  .skill-bar::after { content: ''; position: absolute; right: 0; top: -1px; width: 4px; height: 5px; background: white; border-radius: 50%; opacity: 0.8; }
+
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-copy { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 4%; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,13,18,0.98); padding: 1.5rem 5%; gap: 1.2rem; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .hamburger { display: flex; }
+    .about-grid { grid-template-columns: 1fr; }
+    .about-img-wrap { max-width: 300px; margin: 0 auto; }
+    #cursor, #cursor-ring { display: none; }
+    body { cursor: auto; }
+    a, button { cursor: pointer; }
+  }
+  .skill-percent {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+.skill-card:hover .skill-percent {
+  color: #00ffe1;
+  text-shadow: 0 0 8px rgba(0,229,192,0.7);
+}
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">FDN<span>.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="resume.html">Resume</a></li>
+    <li><a href="certs.html">Certs</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="page-label">// 01. tentang saya</div>
+    <h1 class="page-title">Siapa Saya?</h1>
+    <div class="page-divider"></div>
+  </div>
+</div>
+
+<section id="about" style="background: var(--bg2);">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal">
+      <div class="about-badge">IPK 3.50 / 4.00</div>
+      <div class="about-img-frame" id="tiltFrame">
+        <img src="IMG_3514.jpg" alt="Foto Profil">
+        <div class="about-img-scan"></div>
+      </div>
+      <div class="about-corner"></div>
+    </div>
+    <div class="reveal">
+      <p class="about-text">
+        Saya merupakan lulusan baru Sistem Komputer dari Universitas Komputer Indonesia dengan IPK 3.50/4.00.
+        Memiliki antusiasme tinggi dalam bidang Teknologi Informasi, khususnya Robotika, Internet of Things (IoT),
+        Pemrograman Basis Data, Jaringan (Networking), serta Pengembangan Web.
+      </p>
+      <p class="about-text">
+        Saya adalah individu yang berdedikasi, cepat beradaptasi, dan mampu bekerja secara mandiri maupun dalam tim,
+        dengan komitmen kuat untuk terus belajar dan berkembang guna memberikan kontribusi maksimal.
+      </p>
+      <ul class="about-info">
+        <li><span class="lbl">Nama</span><span class="val">Fauzan Dwi Nugraha</span></li>
+        <li><span class="lbl">Email</span><span class="val"><a href="mailto:fauzandwi68@email.com">fauzandwi68@email.com</a></span></li>
+        <li><span class="lbl">Lokasi</span><span class="val">Bandung Barat, Jawa Barat</span></li>
+        <li><span class="lbl">Interest</span><span class="val">IoT, Web Development, Robotika, Cybersecurity</span></li>
+        <li><span class="lbl">LinkedIn</span><span class="val"><a href="https://www.linkedin.com/in/fauzandwin/" target="_blank">fauzandwin</a></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="reveal">
+    <div class="section-label">// tech stack</div>
+    <h2 class="section-title">Keahlian Saya</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="skills-grid reveal">
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🌐</span><div class="skill-name">HTML/CSS</div><div class="skill-level"><div class="skill-bar" data-width="90"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🗄️</span><div class="skill-name">SQL</div><div class="skill-level"><div class="skill-bar" data-width="88"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🔌</span><div class="skill-name">Arduino</div><div class="skill-level"><div class="skill-bar" data-width="85"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🐘</span><div class="skill-name">PHP</div><div class="skill-level"><div class="skill-bar" data-width="70"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🚀</span><div class="skill-name">Laravel</div><div class="skill-level"><div class="skill-bar" data-width="68"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🐍</span><div class="skill-name">Python</div><div class="skill-level"><div class="skill-bar" data-width="70"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">⚡</span><div class="skill-name">JavaScript</div><div class="skill-level"><div class="skill-bar" data-width="68"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🔷</span><div class="skill-name">C#</div><div class="skill-level"><div class="skill-bar" data-width="65"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">⚙️</span><div class="skill-name">C++</div><div class="skill-level"><div class="skill-bar" data-width="65"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🌐</span><div class="skill-name">Networking</div><div class="skill-level"><div class="skill-bar" data-width="70"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🔒</span><div class="skill-name">Cybersecurity</div><div class="skill-level"><div class="skill-bar" data-width="60"></div></div></div>
+
+  <div class="skill-card"><div class="skill-percent">0%</div><span class="skill-icon">🎨</span><div class="skill-name">Desain Grafis</div><div class="skill-level"><div class="skill-bar" data-width="75"></div></div></div>
+
+</div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2026 Fauzan Dwi Nugraha. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/fauzandwin/" target="_blank">LinkedIn</a>
+    <a href="mailto:fauzandwi68@email.com">Email</a>
+  </div>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+function animateRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animateRing); }
+animateRing();
+
+// SCROLL PROGRESS & NAV
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scroll-progress').style.width = (window.scrollY / h * 100) + '%';
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// TILT EFFECT on image
+const tiltFrame = document.getElementById('tiltFrame');
+tiltFrame.addEventListener('mousemove', e => {
+  const r = tiltFrame.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - 0.5;
+  const y = (e.clientY - r.top) / r.height - 0.5;
+  tiltFrame.style.transform = `perspective(800px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) scale(1.02)`;
+});
+tiltFrame.addEventListener('mouseleave', () => {
+  tiltFrame.style.transform = '';
+});
+
+// REVEAL + SKILL BARS
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      e.target.querySelectorAll('.skill-bar').forEach((bar, j) => {
+  setTimeout(() => {
+    let target = parseInt(bar.dataset.width);
+    bar.style.width = target + '%';
+
+    let percentText = bar.closest('.skill-card').querySelector('.skill-percent');
+    let count = 0;
+
+    let interval = setInterval(() => {
+      if (count >= target) {
+        clearInterval(interval);
+      } else {
+        count++;
+        percentText.textContent = count + '%';
+      }
+    }, 15);
+
+  }, j * 80);
+});
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+</script>
+</body>
+</html>

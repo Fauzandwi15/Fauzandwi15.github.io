@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio – Fauzan Dwi Nugraha</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d12; --bg2: #111520; --bg3: #161b27;
+    --accent: #00e5c0; --accent2: #0077ff;
+    --text: #e8edf5; --muted: #7a8499;
+    --border: rgba(0,229,192,0.15); --card: rgba(22,27,39,0.9);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; cursor: none; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  #cursor { position: fixed; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: screen; transition: width 0.2s, height 0.2s; }
+  #cursor-ring { position: fixed; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(0,229,192,0.5); pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: left 0.12s ease, top 0.12s ease, width 0.3s, height 0.3s; }
+  #scroll-progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 200; width: 0%; }
+  .noise { position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%; background: rgba(10,13,18,0.85);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); transition: padding 0.3s;
+  }
+  nav.scrolled { padding: 0.8rem 5%; }
+  .nav-logo { font-family: 'Space Mono', monospace; font-size: 1rem; color: var(--accent); letter-spacing: 0.1em; text-decoration: none; position: relative; }
+  .nav-logo span { color: var(--text); }
+  .nav-logo::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-logo:hover::after { width: 100%; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; font-family: 'Space Mono', monospace; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+
+  .page-hero { padding: 10rem 5% 5rem; background: var(--bg2); position: relative; overflow: hidden; }
+  .page-hero::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(0,229,192,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,192,0.03) 1px, transparent 1px); background-size: 50px 50px; }
+  .page-hero-content { position: relative; z-index: 1; }
+  .page-label { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .page-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .page-divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin-top: 1.5rem; }
+
+  /* FILTER */
+  .filter-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 3rem; }
+  .filter-btn {
+    font-family: 'Space Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.45rem 1.1rem; border-radius: 2px; cursor: none;
+    background: transparent; color: var(--muted); border: 1px solid var(--border);
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .filter-btn::before { content: ''; position: absolute; inset: 0; background: rgba(0,229,192,0.08); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .filter-btn:hover::before, .filter-btn.active::before { transform: scaleX(1); }
+  .filter-btn:hover, .filter-btn.active { color: var(--accent); border-color: var(--accent); }
+
+  /* PROJECT GRID */
+  section { padding: 5rem 5%; }
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+  .project-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; position: relative; transform-style: preserve-3d;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 1; }
+  /* Shimmer on hover */
+  .project-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%); transform: translateX(-100%); transition: transform 0.6s ease; z-index: 2; pointer-events: none; }
+  .project-card:hover::after { transform: translateX(100%); }
+  .project-card:hover { border-color: rgba(0,229,192,0.4); box-shadow: 0 20px 50px rgba(0,229,192,0.12); }
+  .project-thumb {
+    width: 100%; height: 180px; background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem; border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden; transition: background 0.3s;
+  }
+  .project-thumb .thumb-emoji { transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); display: block; }
+  .project-card:hover .thumb-emoji { transform: scale(1.25) rotate(-8deg); }
+  .project-thumb::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,192,0.04) 0%, transparent 60%); }
+  .project-body { padding: 1.5rem; position: relative; z-index: 1; }
+  .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+  .project-tag {
+    font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem; border-radius: 2px;
+    background: rgba(0,229,192,0.08); color: var(--accent); border: 1px solid rgba(0,229,192,0.2);
+    transition: background 0.2s;
+  }
+  .project-card:hover .project-tag { background: rgba(0,229,192,0.14); }
+  .project-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.4; }
+  .project-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.25rem; }
+  .project-links { display: flex; gap: 0.75rem; }
+  .project-link {
+    font-family: 'Space Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em;
+    padding: 0.45rem 1rem; border-radius: 2px; text-decoration: none;
+    border: 1px solid var(--border); color: var(--muted); transition: all 0.2s;
+  }
+  .project-link:hover { border-color: var(--accent); color: var(--accent); }
+  .project-link.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; position: relative; overflow: hidden; }
+  .project-link.primary::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); transform: translateX(-100%) skewX(-15deg); transition: transform 0.3s; }
+  .project-link.primary:hover::before { transform: translateX(100%) skewX(-15deg); }
+  .project-link.primary:hover { opacity: 0.9; }
+
+  /* HIDDEN STATE FOR FILTER */
+  .project-card.hidden { opacity: 0; transform: scale(0.9) translateY(10px); pointer-events: none; transition: opacity 0.3s, transform 0.3s; }
+  .project-card.visible-card { opacity: 1; transform: none; transition: opacity 0.4s, transform 0.4s; }
+
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-copy { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 4%; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,13,18,0.98); padding: 1.5rem 5%; gap: 1.2rem; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .hamburger { display: flex; }
+    .projects-grid { grid-template-columns: 1fr; }
+    #cursor, #cursor-ring { display: none; }
+    body { cursor: auto; }
+    a, button { cursor: pointer; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">FDN<span>.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="about.html">About</a></li>
+    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+    <li><a href="resume.html">Resume</a></li>
+    <li><a href="certs.html">Certs</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="page-label">// 02. proyek</div>
+    <h1 class="page-title">Portfolio</h1>
+    <div class="page-divider"></div>
+  </div>
+</div>
+
+<section>
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" data-filter="all">Semua</button>
+    <button class="filter-btn" data-filter="iot">IoT</button>
+    <button class="filter-btn" data-filter="web">Web</button>
+    <button class="filter-btn" data-filter="robotika">Robotika</button>
+    <button class="filter-btn" data-filter="ai">AI / CV</button>
+  </div>
+
+  <div class="projects-grid" id="projectsGrid">
+    <div class="project-card reveal visible-card" data-category="ai">
+      <div class="project-thumb"><span class="thumb-emoji">🚗</span></div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">Computer Vision</span><span class="project-tag">Raspberry Pi 5</span></div>
+        <div class="project-title">Deteksi Rambu Lalu Lintas — Mobil Otomatis</div>
+        <div class="project-desc">Tugas Akhir: Sistem deteksi & pengenalan rambu lalu lintas untuk pengendalian mobil otomatis menggunakan Raspberry Pi 5 dan Computer Vision.</div>
+        <div class="project-links"><a href="deteksi.jpeg" class="project-link primary">Lihat Detail →</a><a href="#" class="project-link">GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="project-card reveal visible-card" data-category="iot">
+      <div class="project-thumb"><span class="thumb-emoji">🐟</span></div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Android</span><span class="project-tag">IoT</span><span class="project-tag">Ultrasonik</span></div>
+        <div class="project-title">Sistem Akuakultur Cerdas (PKM-PI)</div>
+        <div class="project-desc">Sistem akuakultur berbasis Android + sensor ultrasonik untuk otomasi pemberian pakan ikan, monitoring kualitas air, dan prediksi panen. Didanai Kemdikbudristek.</div>
+        <div class="project-links"><a href="PAKAN IKAN.jpg" class="project-link primary">Lihat Detail →</a></div>
+      </div>
+    </div>
+
+    <div class="project-card reveal visible-card" data-category="iot">
+      <div class="project-thumb"><span class="thumb-emoji">🏠</span></div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">ESP32</span><span class="project-tag">IoT</span><span class="project-tag">Sensor</span></div>
+        <div class="project-title">Smart Room Monitoring</div>
+        <div class="project-desc">Sistem monitoring ruangan cerdas menggunakan ESP32 dengan berbagai sensor lingkungan, ditampilkan pada dashboard real-time.</div>
+        <div class="project-links"><a href="MONITORING KUALITAS AIR.jpg" class="project-link primary">Lihat Detail →</a><a href="#" class="project-link">GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="project-card reveal visible-card" data-category="iot">
+      <div class="project-thumb"><span class="thumb-emoji">💧</span></div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">ESP32</span><span class="project-tag">Telegram Bot</span><span class="project-tag">Sensor pH</span></div>
+        <div class="project-title">Sistem Monitoring pH Air + Bot Telegram</div>
+        <div class="project-desc">Sistem pemantauan pH air secara otomatis dengan notifikasi real-time melalui Telegram Bot untuk peringatan kualitas air.</div>
+        <div class="project-links"><a href="#" class="project-link primary">Lihat Detail →</a><a href="#" class="project-link">GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="project-card reveal visible-card" data-category="web">
+      <div class="project-thumb"><span class="thumb-emoji">🛒</span></div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Laravel</span><span class="project-tag">PHP</span><span class="project-tag">MySQL</span></div>
+        <div class="project-title">Aplikasi Kasir Laravel</div>
+        <div class="project-desc">Aplikasi point-of-sale berbasis web menggunakan Laravel dengan fitur manajemen produk, transaksi, dan laporan penjualan.</div>
+        <div class="project-links"></div>
+      </div>
+    </div>
+
+    <div class="project-card reveal visible-card" data-category="robotika">
+      <div class="project-thumb"><span class="thumb-emoji">🤖</span></div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Arduino</span><span class="project-tag">C++</span><span class="project-tag">Sensor IR</span></div>
+        <div class="project-title">Robot Line Follower Arduino</div>
+        <div class="project-desc">Robot line follower berbasis Arduino dengan sensor inframerah dan algoritma kontrol PID untuk mengikuti jalur secara akurat.</div>
+        <div class="project-links"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2026 Fauzan Dwi Nugraha. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/fauzandwin/" target="_blank">LinkedIn</a>
+    <a href="mailto:fauzandwi68@email.com">Email</a>
+  </div>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+function animateRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animateRing); }
+animateRing();
+
+// SCROLL
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scroll-progress').style.width = (window.scrollY / h * 100) + '%';
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// 3D TILT ON CARDS
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateZ(8px)`;
+    card.style.boxShadow = `${-x*20}px ${-y*20}px 40px rgba(0,229,192,0.1)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+    card.style.boxShadow = '';
+  });
+});
+
+// FILTER with animation
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.project-card').forEach((card, i) => {
+      const show = filter === 'all' || card.dataset.category === filter;
+      if (show) {
+        card.classList.remove('hidden');
+        setTimeout(() => card.classList.add('visible-card'), i * 60);
+        card.style.display = '';
+      } else {
+        card.classList.add('hidden');
+        card.classList.remove('visible-card');
+        setTimeout(() => { if (card.classList.contains('hidden')) card.style.display = 'none'; }, 300);
+      }
+    });
+  });
+});
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+</script>
+</body>
+</html>

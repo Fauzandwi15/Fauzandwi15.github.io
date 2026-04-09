@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontak – Fauzan Dwi Nugraha</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d12; --bg2: #111520; --bg3: #161b27;
+    --accent: #00e5c0; --accent2: #0077ff;
+    --text: #e8edf5; --muted: #7a8499;
+    --border: rgba(0,229,192,0.15); --card: rgba(22,27,39,0.9);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; cursor: none; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  #cursor { position: fixed; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: screen; }
+  #cursor-ring { position: fixed; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(0,229,192,0.5); pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: left 0.12s ease, top 0.12s ease; }
+  #scroll-progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 200; width: 0%; }
+  .noise { position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%; background: rgba(10,13,18,0.85);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); transition: padding 0.3s;
+  }
+  nav.scrolled { padding: 0.8rem 5%; }
+  .nav-logo { font-family: 'Space Mono', monospace; font-size: 1rem; color: var(--accent); letter-spacing: 0.1em; text-decoration: none; position: relative; }
+  .nav-logo span { color: var(--text); }
+  .nav-logo::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-logo:hover::after { width: 100%; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; font-family: 'Space Mono', monospace; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+
+  .page-hero { padding: 10rem 5% 5rem; background: var(--bg2); position: relative; overflow: hidden; }
+  .page-hero::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(0,229,192,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,192,0.03) 1px, transparent 1px); background-size: 50px 50px; }
+  .page-hero-content { position: relative; z-index: 1; }
+  .page-label { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .page-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .page-divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin-top: 1.5rem; }
+
+  section { padding: 5rem 5%; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+
+  /* CONTACT INFO */
+  .contact-info-list { list-style: none; margin-top: 2rem; }
+  .contact-info-list li { display: flex; gap: 1rem; align-items: flex-start; padding: 1.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: padding-left 0.3s; }
+  .contact-info-list li:hover { padding-left: 0.5rem; }
+  .ci-icon { width: 40px; height: 40px; border-radius: 4px; background: rgba(0,229,192,0.1); border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; transition: background 0.3s, transform 0.3s; }
+  .contact-info-list li:hover .ci-icon { background: rgba(0,229,192,0.2); transform: scale(1.1) rotate(-5deg); }
+  .ci-lbl { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.25rem; }
+  .ci-val { font-size: 0.95rem; color: var(--text); }
+  .ci-val a { color: var(--text); text-decoration: none; transition: color 0.2s; position: relative; }
+  .ci-val a::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .ci-val a:hover { color: var(--accent); }
+  .ci-val a:hover::after { width: 100%; }
+
+  /* FORM */
+  .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.5rem; position: relative; }
+  .form-group label { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.3s; }
+  .form-group:focus-within label { color: var(--accent); }
+  .form-group input, .form-group textarea {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text);
+    padding: 0.85rem 1rem; border-radius: 3px; font-family: 'Syne', sans-serif;
+    font-size: 0.95rem; outline: none; transition: border-color 0.3s, box-shadow 0.3s, background 0.3s; resize: vertical;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); background: rgba(22,27,39,1); box-shadow: 0 0 0 3px rgba(0,229,192,0.08), inset 0 1px 0 rgba(0,229,192,0.05); }
+  .form-group textarea { min-height: 140px; }
+
+  /* Floating label effect */
+  .form-group .input-line { position: absolute; bottom: 0; left: 1rem; right: 1rem; height: 1px; background: var(--accent); transform: scaleX(0); transition: transform 0.3s; transform-origin: left; }
+  .form-group:focus-within .input-line { transform: scaleX(1); }
+
+  .btn-primary {
+    background: var(--accent); color: var(--bg); padding: 0.9rem 2rem; border: none;
+    border-radius: 3px; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+    letter-spacing: 0.08em; cursor: none; text-decoration: none; transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    font-weight: 700; text-align: center; display: block; position: relative; overflow: hidden;
+  }
+  .btn-primary::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); transform: translateX(-100%) skewX(-15deg); transition: transform 0.4s; }
+  .btn-primary:hover::before { transform: translateX(100%) skewX(-15deg); }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,229,192,0.35); }
+
+  .contact-intro { color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+
+  /* SOCIAL BADGES */
+  .social-row { display: flex; gap: 0.75rem; margin-top: 2rem; }
+  .social-badge { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 3px; text-decoration: none; font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); transition: all 0.3s; }
+  .social-badge:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,229,192,0.12); }
+  .social-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: dotPulse 2s infinite; }
+  @keyframes dotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-copy { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 4%; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,13,18,0.98); padding: 1.5rem 5%; gap: 1.2rem; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .hamburger { display: flex; }
+    .contact-grid { grid-template-columns: 1fr; }
+    #cursor, #cursor-ring { display: none; }
+    body { cursor: auto; }
+    a, button { cursor: pointer; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">FDN<span>.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="about.html">About</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="resume.html">Resume</a></li>
+    <li><a href="certs.html">Certs</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="page-label">// 05. kontak</div>
+    <h1 class="page-title">Hubungi Saya</h1>
+    <div class="page-divider"></div>
+  </div>
+</div>
+
+<section style="background: var(--bg);">
+  <div class="contact-grid">
+    <div class="reveal">
+      <p class="contact-intro">
+        Terbuka untuk peluang kerja, kolaborasi proyek, maupun freelance work.
+        Jangan ragu untuk menghubungi saya kapan saja!
+      </p>
+      <ul class="contact-info-list">
+        <li>
+          <div class="ci-icon">📍</div>
+          <div><div class="ci-lbl">Lokasi</div><div class="ci-val">Bandung Barat, Jawa Barat, Indonesia</div></div>
+        </li>
+        <li>
+          <div class="ci-icon">✉️</div>
+          <div><div class="ci-lbl">Email</div><div class="ci-val"><a href="mailto:fauzandwi68@email.com">fauzandwi68@email.com</a></div></div>
+        </li>
+        <li>
+          <div class="ci-icon">🔗</div>
+          <div><div class="ci-lbl">LinkedIn</div><div class="ci-val"><a href="https://www.linkedin.com/in/fauzandwin/" target="_blank">linkedin.com/in/fauzandwin</a></div></div>
+        </li>
+      </ul>
+      <div class="social-row">
+        <a href="https://www.linkedin.com/in/fauzandwin/" target="_blank" class="social-badge"><span class="dot"></span>LinkedIn</a>
+        <a href="mailto:fauzandwi68@email.com" class="social-badge"><span class="dot"></span>Email</a>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="contact-form">
+        <div class="form-group">
+          <label>Nama Lengkap</label>
+          <input type="text" placeholder="John Doe">
+          <div class="input-line"></div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="john@email.com">
+          <div class="input-line"></div>
+        </div>
+        <div class="form-group">
+          <label>Pesan</label>
+          <textarea placeholder="Halo Fauzan, saya ingin..."></textarea>
+          <div class="input-line"></div>
+        </div>
+        <a href="mailto:fauzandwi68@email.com" class="btn-primary">Kirim Pesan →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2026 Fauzan Dwi Nugraha. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/fauzandwin/" target="_blank">LinkedIn</a>
+    <a href="mailto:fauzandwi68@email.com">Email</a>
+  </div>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+function animateRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animateRing); }
+animateRing();
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scroll-progress').style.width = (window.scrollY / h * 100) + '%';
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+</script>
+</body>
+</html>
